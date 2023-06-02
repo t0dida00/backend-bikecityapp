@@ -10,6 +10,6 @@ const tripSchema = new mongoose.Schema({
 'Covered distance (m)': {type: Number, required: true},
 'Duration (sec.)': {type: Number, required: true} })
 
-const Trip = mongoose.model('jorneys', tripSchema);
+const Trip = mongoose.model('journeys', tripSchema);
 
 module.exports = Trip;
