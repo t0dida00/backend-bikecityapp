@@ -8,7 +8,7 @@ const tripSchema = new mongoose.Schema({
 'Return station id': {type: Number, required: true},
 'Return station name': {type: String, required: true},
 'Covered distance (m)': {type: Number, required: true},
-'Duration (sec..)': {type: Number, required: true} })
+'Duration (sec.)': {type: Number, required: true} })
 
 const Trip = mongoose.model('jorneys', tripSchema);
 
