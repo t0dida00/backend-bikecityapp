@@ -3,7 +3,7 @@ const journeyController = require("../controllers/tripController")
 
 const router = express.Router();
 
-// router.get("/trips",jorneyController.jorneyList)
+ router.get("/trips",journeyController.tripList)
 // router.get("/trip/:id",jorneyController.Jorney)
 // router.post("/upload/trips",uploadController.jorneyUpload)
 // router.post("/upload/trip",uploadController.jorneyFormUpload)
