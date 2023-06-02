@@ -36,8 +36,7 @@ module.exports = {
               const trips = data.map(row => new Trip(row))
               console.log("Uploading trips to database !")
               await Trip.insertMany(trips)
-            }).then(() => {
-              res.send('Trips uploaded successfully');
+                res.send(`Trips uploaded successfully: ${trips.length}`);
             })
             .catch(error => {
               console.log("error here")
