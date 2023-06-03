@@ -16,16 +16,16 @@ const parseFields = (fields) => {
   }
   if (fields["durationMin"] || fields["durationMax"]) {
     searchOptions["Duration (sec)"] = {};
-  
+
     if (fields["durationMin"]) {
       searchOptions["Duration (sec)"]["$gte"] = parseInt(fields["durationMin"]);
     }
-  
+
     if (fields["durationMax"]) {
       searchOptions["Duration (sec)"]["$lte"] = parseInt(fields["durationMax"]);
     }
   }
-  if (fields["coveredDistanceMin"]|| fields["coveredDistanceMax"]) {
+  if (fields["coveredDistanceMin"] || fields["coveredDistanceMax"]) {
     searchOptions["Covered distance (m)"] = {};
 
     if (fields["coveredDistanceMin"]) {
@@ -37,28 +37,47 @@ const parseFields = (fields) => {
     }
   }
 
+  
   return searchOptions
 }
 module.exports = {
   tripsUpdate: async (req, res) => {
     const form = formidable({ multiples: true });
-    form.parse(req, (err, fields, files) => {
+    form.parse(req, async (err, fields, files) => {
 
       if (err) {
         next(err);
         return;
       }
-      TripFile(files.file.filepath)
-        .then(async data => {
-          const trips = data.map(row => new Trip(row))
-          console.log("Uploading trips to database !")
-          await Trip.insertMany(trips)
-          res.send(`Trips uploaded successfully: ${trips.length}`);
-        })
-        .catch(error => {
-          console.log("error here")
-          res.status(500).send(error)
-        })
+      if (files.file) {
+        TripFile(files.file.filepath)
+          .then(async data => {
+            const trips = data.map(row => new Trip(row))
+            console.log("Uploading trips to database !")
+            await Trip.insertMany(trips)
+            console.log(`Inserted journey list to succesfully`)
+            return res.send(`Trips uploaded successfully: ${trips.length}`);
+          })
+          .catch(error => {
+            console.log("Trip File upload error.")
+            return res.status(500).send(error)
+          })
+      }
+      else if (Object.keys(fields).length != 0) {
+        var new_jorney = fields
+        try {
+          await Trip.create(new_jorney)
+          console.log(`Inserted 1 jorney to succesfully`)
+          return res.send(`Inserted 1 jorney succesfully`)
+        } catch (error) {
+          console.log("Single trip upload error.")
+          return res.status(500).send(error)
+        }
+      }
+      else {
+        res.status(404).send("Something is wrong !!!")
+      }
+
     })
 
   },
@@ -67,9 +86,8 @@ module.exports = {
 
       const form = formidable({ multiples: true });
       form.parse(req, async (err, fields, files) => {
-       
+
         const searchOptions = parseFields(fields)
-        console.log(searchOptions)
         var page_size = req.query.size || 50
         var current_page = (req.query.page - 1) * page_size || 0
         var sort = req.query.sort || "Departure"
@@ -86,14 +104,15 @@ module.exports = {
 
         var indexFields = {};
         indexFields[sort] = order;
+        console.log(searchOptions,indexFields)
 
         const journey_list = await Trip.find(searchOptions)
           .limit(page_size)
           .skip(current_page)
           .sort(indexFields)
-
+        console.log(journey_list.length)
         var journey_length = await Trip.countDocuments(searchOptions)
-        if (journey_list.length > 0 ) {
+        if (journey_list.length > 0) {
           var list = []
           journey_list.map(journey => {
             journey = journey.toJSON()
@@ -118,5 +137,6 @@ module.exports = {
       return res.status(500).send("Internal Server Error");
     }
   },
+
 
 }
