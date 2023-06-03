@@ -37,7 +37,27 @@ const parseFields = (fields) => {
     }
   }
 
-  
+  if (fields["departureStart"] || fields["departureEnd"] ) {
+    searchOptions["Departure"]={};
+    if (fields["departureStart"]) {
+      searchOptions["Departure"]["$gte"] = new Date(fields["departureStart"]);
+    }
+
+    if (fields["departureEnd"]) {
+      searchOptions["Departure"]["$lte"] = new Date(fields["departureEnd"]);
+    }
+  }
+
+  if (fields["returnStart"] || fields["returnEnd"] ) {
+    searchOptions["Return"]={};
+    if (fields["returnStart"]) {
+      searchOptions["Departure"]["$gte"] = new Date(fields["returnStart"]);
+    }
+
+    if (fields["returnEnd"]) {
+      searchOptions["Return"]["$lte"] = new Date(fields["returnEnd"]);
+    }
+  }
   return searchOptions
 }
 module.exports = {
@@ -104,13 +124,13 @@ module.exports = {
 
         var indexFields = {};
         indexFields[sort] = order;
-        console.log(searchOptions,indexFields)
+        console.log(searchOptions, indexFields)
 
         const journey_list = await Trip.find(searchOptions)
           .limit(page_size)
           .skip(current_page)
           .sort(indexFields)
-        console.log(journey_list.length)
+
         var journey_length = await Trip.countDocuments(searchOptions)
         if (journey_list.length > 0) {
           var list = []
