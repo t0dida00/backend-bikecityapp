@@ -5,6 +5,7 @@ require("dotenv").config({path:'./.env'})
 const DOTENV = process.env
 const cors = require('cors');
 const tripRoutes= require("./routes/tripRoutes")
+const stationRoutes= require("./routes/stationRoutes")
 
 app.use(cors());
 
@@ -14,6 +15,7 @@ app.get('/', function (req, res) {
 })
 
 app.use("/",tripRoutes)
+app.use("/",stationRoutes)
 
 app.listen(DOTENV.SERVER_PORT, () => {
   console.log(`API server running at ${DOTENV.SERVER_HOST}:${DOTENV.SERVER_PORT}/`);
