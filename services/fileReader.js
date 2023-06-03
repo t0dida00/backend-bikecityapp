@@ -46,7 +46,7 @@ function TripFile(file_path, delimiter = ',') {
 
 
 
-function readStationFile(file_path, delimiter = ',') {
+function StationFile(file_path, delimiter = ',') {
   return new Promise((resolve, reject) => {
 
     fs.readFile(file_path, 'utf8', (err, data) => {
@@ -89,5 +89,5 @@ function readStationFile(file_path, delimiter = ',') {
 }
 module.exports = {
     TripFile,
-  readStationFile
+    StationFile
 };

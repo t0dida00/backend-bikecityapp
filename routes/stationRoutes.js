@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get("/stations", stationController.stationList)
 router.get("/station/:name", stationController.Station)
-
-// router.post("/trips/upload", journeyController.tripsUpdate)
+ router.post("/stations/upload", stationController.stationsUpdate)
 
 module.exports = router;
