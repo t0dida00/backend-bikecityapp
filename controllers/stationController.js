@@ -58,6 +58,7 @@ module.exports = {
     stationList: async (req, res) => {
         var page_size = req.query.size || 50
         var current_page = (req.query.page - 1) * page_size || 0
+        
         try {
             const form = formidable({ multiples: true });
             form.parse(req, async (err, fields, files) => {
