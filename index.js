@@ -10,6 +10,7 @@ const stationRoutes= require("./routes/stationRoutes")
 app.use(cors());
 
 connectToMongoDB()
+
 app.get('/', function (req, res) {
   res.send('Welcome to Bike City APIs - The summer project OAMK 2023')
 })

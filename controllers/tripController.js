@@ -3,64 +3,6 @@ const formidable = require('formidable');
 const { TripFile } = require("../services/fileReader")
 const {fieldParser} = require("../services/fieldParser")
 
-// const parseFields = (fields) => {
-//   var searchOptions = {}
-//   if (fields["departureStationName"] != undefined) {
-//     searchOptions["Departure station name"] = {
-//       $regex: new RegExp(`^${fields["departureStationName"]}`, "i")
-//     };
-//   }
-//   if (fields["returnStationName"] != undefined) {
-//     searchOptions["Return station name"] = {
-//       $regex: new RegExp(`^${fields["returnStationName"]}`, "i")
-//     };
-//   }
-//   if (fields["durationMin"] || fields["durationMax"]) {
-//     searchOptions["Duration (sec)"] = {};
-
-//     if (fields["durationMin"]) {
-//       searchOptions["Duration (sec)"]["$gte"] = parseInt(fields["durationMin"]);
-//     }
-
-//     if (fields["durationMax"]) {
-//       searchOptions["Duration (sec)"]["$lte"] = parseInt(fields["durationMax"]);
-//     }
-//   }
-//   if (fields["coveredDistanceMin"] || fields["coveredDistanceMax"]) {
-//     searchOptions["Covered distance (m)"] = {};
-
-//     if (fields["coveredDistanceMin"]) {
-//       searchOptions["Covered distance (m)"]["$gte"] = parseInt(fields["coveredDistanceMin"]);
-//     }
-
-//     if (fields["coveredDistanceMax"]) {
-//       searchOptions["Covered distance (m)"]["$lte"] = parseInt(fields["coveredDistanceMax"]);
-//     }
-//   }
-
-//   if (fields["departureStart"] || fields["departureEnd"] ) {
-//     searchOptions["Departure"]={};
-//     if (fields["departureStart"]) {
-//       searchOptions["Departure"]["$gte"] = new Date(fields["departureStart"]);
-//     }
-
-//     if (fields["departureEnd"]) {
-//       searchOptions["Departure"]["$lte"] = new Date(fields["departureEnd"]);
-//     }
-//   }
-
-//   if (fields["returnStart"] || fields["returnEnd"] ) {
-//     searchOptions["Return"]={};
-//     if (fields["returnStart"]) {
-//       searchOptions["Departure"]["$gte"] = new Date(fields["returnStart"]);
-//     }
-
-//     if (fields["returnEnd"]) {
-//       searchOptions["Return"]["$lte"] = new Date(fields["returnEnd"]);
-//     }
-//   }
-//   return searchOptions
-// }
 module.exports = {
   tripsUpdate: async (req, res) => {
     const form = formidable({ multiples: true });
@@ -103,14 +45,15 @@ module.exports = {
 
   },
   tripList: async (req, res) => {
+    var page_size = req.query.size || 50
+    var current_page = (req.query.page - 1) * page_size || 0
     try {
 
       const form = formidable({ multiples: true });
       form.parse(req, async (err, fields, files) => {
 
+        console.log(fields)
         const searchOptions = fieldParser(fields)
-        var page_size = req.query.size || 50
-        var current_page = (req.query.page - 1) * page_size || 0
         var sort = req.query.sort || "Departure"
         var order = req.query.order || 1
         if (order == "desc") {
@@ -125,7 +68,6 @@ module.exports = {
 
         var indexFields = {};
         indexFields[sort] = order;
-
         const journey_list = await Trip.find(searchOptions)
           .limit(page_size)
           .skip(current_page)

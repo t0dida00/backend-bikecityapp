@@ -5,65 +5,16 @@ const { fieldParser } = require("../services/fieldParser")
 const { StationFile } = require("../services/fileReader")
 
 
-// const parseFields = (fields) => {
-//     var searchOptions = {}
-//     if (fields["Name"] != undefined) {
-//         searchOptions["$or"] = [
-//             {
-//                 "Name": {
-//                     $regex: new RegExp(`^${fields["Name"]}`, "i")
-//                 }
-//             },
-//             {
-//                 "Nimi": {
-//                     $regex: new RegExp(`^${fields["Name"]}`, "i")
-//                 }
-//             },
-//             {
-//                 "Namn": {
-//                     $regex: new RegExp(`^${fields["Name"]}`, "i")
-//                 }
-//             }
-//         ];
-//     }
-//     if (fields["Adress"] != undefined) {
-//         searchOptions["$or"] = [
-//             {
-//                 "Adress": {
-//                     $regex: new RegExp(`^${fields["Adress"]}`, "i")
-//                 }
-//             },
-//             {
-//                 "Osoite": {
-//                     $regex: new RegExp(`^${fields["Adress"]}`, "i")
-//                 }
-//             }
-//         ];
-//     }
-
-//     if (fields["departureStart"] || fields["departureEnd"]) {
-//         searchOptions["Departure"] = {};
-//         if (fields["departureStart"]) {
-//             searchOptions["Departure"]["$gte"] = new Date(fields["departureStart"]);
-//         }
-
-//         if (fields["departureEnd"]) {
-//             searchOptions["Departure"]["$lte"] = new Date(fields["departureEnd"]);
-//         }
-//     }
-//     return searchOptions
-// }
-
 module.exports = {
     stationList: async (req, res) => {
         var page_size = req.query.size || 50
         var current_page = (req.query.page - 1) * page_size || 0
-        
         try {
             const form = formidable({ multiples: true });
+       
             form.parse(req, async (err, fields, files) => {
                 const searchOptions = fieldParser(fields)
-                console.log(searchOptions)
+              
                 const station_list = await Station.find(searchOptions)
                     .sort({ FID: 1 })
                     .limit(page_size)
@@ -75,7 +26,7 @@ module.exports = {
                         data: station_list,
                         length: stations_length
                     }
-                    console.log("Get station list successful !")
+                    console.log("Get station list successful1 !")
                     return res.send(data)
                 }
                 else {
